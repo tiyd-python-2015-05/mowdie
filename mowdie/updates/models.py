@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Status(models.Model):
+    class Meta:
+        verbose_name_plural = "statuses"
+        
     user = models.ForeignKey(User)
     text = models.CharField(max_length=140)
     posted_at = models.DateTimeField()
