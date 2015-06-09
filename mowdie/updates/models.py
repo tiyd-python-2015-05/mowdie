@@ -8,7 +8,16 @@ class Status(models.Model):
     text = models.CharField(max_length=140)
     posted_at = models.DateTimeField()
 
+    def favorite_count(self):
+        return self.favorite_set.count()
+
+    def __str__(self):
+        return "{}: {}".format(self.user, self.text)
+
 
 class Favorite(models.Model):
     user = models.ForeignKey(User)
     status = models.ForeignKey(Status)
+
+    def __str__(self):
+        return "{} -> {}".format(self.user, self.status)
