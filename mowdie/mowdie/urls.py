@@ -19,6 +19,6 @@ from updates import views as updates_views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^updates/$', updates_views.all_statuses, name="all_statuses"),
-    url(r'^updates/user/(?P<user_id>\d+)$', updates_views.show_user, name="show_user")
+    url(r'^$', updates_views.index, name="index"),
+    url(r'^user/(?P<user_id>\d+)$', updates_views.show_user, name="show_user")
 ]
