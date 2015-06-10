@@ -21,6 +21,9 @@ class Favorite(models.Model):
     user = models.ForeignKey(User)
     status = models.ForeignKey(Status)
 
+    class Meta:
+        unique_together = ('user', 'status',)
+
     def __str__(self):
         return "{} -> {}".format(self.user, self.status)
 
