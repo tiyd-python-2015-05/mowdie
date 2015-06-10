@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from updates import views
+from updates import views as updates_views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^updates/$', views.all_statuses),
+    url(r'^updates/$', updates_views.all_statuses),
+    url(r'^updates/user/(?P<user_id>\d+)$', updates_views.show_user, name="show_user")
 ]
