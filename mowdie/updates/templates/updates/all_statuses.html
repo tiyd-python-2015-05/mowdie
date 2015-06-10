@@ -9,7 +9,9 @@
             <p>
                 <a href="{% url 'show_user' status.user.id %}">{{ status.user }}</a>
                 -
-                <em>{{ status.posted_at }}</em></p>
+                <em>{{ status.posted_at }}</em>
+                -
+                {{ status.favorite_set.count }} favorites</p>
         </div>
     {% endfor %}
 {% endblock %}

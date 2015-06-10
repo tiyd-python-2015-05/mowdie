@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Status
@@ -6,7 +7,7 @@ from django.contrib.auth.models import User
 # Create your views here.
 
 def all_statuses(request):
-    statuses = Status.objects.all().order_by('-posted_at')
+    statuses = Status.objects.order_by('-posted_at')
     return render(request,
                   "updates/all_statuses.html",
                   {"statuses": statuses})
