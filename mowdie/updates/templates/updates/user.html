@@ -1,19 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-<h1>User {{ user }}</h1>
+{% extends "updates/base.html" %}
 
-<h2>Statuses</h2>
-{% for status in statuses %}
-    <div>
-        <p>{{ status.text }}</p>
+{% block content %}
+    <h2>User {{ user }}</h2>
 
-        <p><em>{{ status.posted_at }}</em></p>
-    </div>
-{% endfor %}
-</body>
-</html>
+    <h3>Statuses</h3>
+    {% for status in statuses %}
+        <div>
+            <p>{{ status.text }}</p>
+
+            <p><em>{{ status.posted_at }}</em></p>
+        </div>
+    {% endfor %}
+{% endblock %}
