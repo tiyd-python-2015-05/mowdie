@@ -2,10 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class Status(models.Model):
-    class Meta:
-        verbose_name_plural = "statuses"
-
+class Update(models.Model):
     user = models.ForeignKey(User)
     text = models.CharField(max_length=140)
     posted_at = models.DateTimeField()
@@ -16,13 +13,13 @@ class Status(models.Model):
 
 class Favorite(models.Model):
     user = models.ForeignKey(User)
-    status = models.ForeignKey(Status)
+    update = models.ForeignKey(Update)
 
     class Meta:
-        unique_together = ('user', 'status',)
+        unique_together = ('user', 'update',)
 
     def __str__(self):
-        return "{} -> {}".format(self.user, self.status)
+        return "{} -> {}".format(self.user, self.update)
 
 
 def load_fake_data():
@@ -37,14 +34,14 @@ def load_fake_data():
     with open(settings.BASE_DIR + "/../john_carter.txt") as file:
         textgen.parse(file.read())
 
-    def tweet():
+    def update_text():
         return textgen.generate(
             startf=lambda db: random.choice([x for x in db
                                              if x[0][0].isupper()]),
             endf=lambda s: len(s) > 120)
 
     Favorite.objects.all().delete()
-    Status.objects.all().delete()
+    Update.objects.all().delete()
     User.objects.all().delete()
 
     users = []
@@ -57,7 +54,7 @@ def load_fake_data():
 
     statuses = []
     for _ in range(100):
-        status = Status(text=tweet(),
+        status = Update(text=update_text(),
                         posted_at=fake.date_time_this_year(),
                         user=random.choice(users))
         status.save()

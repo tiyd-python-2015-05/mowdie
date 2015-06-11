@@ -3,12 +3,18 @@
 {% block content %}
     <h2>User {{ user }}</h2>
 
-    <h3>Statuses</h3>
-    {% for status in statuses %}
+    <h3>Updates</h3>
+    {% for update in updates %}
         <div>
-            <p>{{ status.text }}</p>
+            <p>{{ update.text }}</p>
 
-            <p><em>{{ status.posted_at }}</em></p>
+            <p>
+                <em>{{ update.posted_at }}</em>
+                -
+                {{ update.favorite_set.count }} favorites
+            </p>
+
+
         </div>
     {% endfor %}
 {% endblock %}

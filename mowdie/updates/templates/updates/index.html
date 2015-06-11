@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>All statuses</h2>
-    {% for status in statuses %}
+    <h2>All updates</h2>
+    {% for update in updates %}
         <div>
-            <p>{{ status.text }}</p>
+            <p>{{ update.text }}</p>
 
             <p>
-                <a href="{% url 'show_user' status.user.id %}">{{ status.user }}</a>
+                <a href="{% url 'show_user' update.user.id %}">{{ update.user }}</a>
                 -
-                <em>{{ status.posted_at }}</em>
+                <em>{{ update.posted_at }}</em>
                 -
-                {{ status.favorite__count }} favorites
+                {{ update.favorite_set.count }} favorites
             </p>
         </div>
     {% endfor %}

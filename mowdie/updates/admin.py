@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Status, Favorite
+from .models import Update, Favorite
 
-class StatusAdmin(admin.ModelAdmin):
+class UpdateAdmin(admin.ModelAdmin):
     list_display = ['text', 'user']
 
 # Register your models here.
-admin.site.register(Status, StatusAdmin)
+admin.site.register(Update, UpdateAdmin)
 admin.site.register(Favorite)
 

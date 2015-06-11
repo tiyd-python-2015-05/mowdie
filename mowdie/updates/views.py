@@ -1,27 +1,26 @@
-from django.db.models import Count
 from django.shortcuts import render
-from .models import Status
+from .models import Update
 from django.contrib.auth.models import User
 
 
 def index(request):
-    statuses = Status.objects.annotate(Count('favorite')).order_by('-posted_at')
+    updates = Update.objects.order_by('-posted_at')
     return render(request,
                   "updates/index.html",
-                  {"statuses": statuses})
+                  {"updates": updates})
 
 
 def show_status(request, status_id):
-    status = Status.objects.get(pk=status_id)
+    update = Update.objects.get(pk=status_id)
     return render(request,
-                  "updates/status.html",
-                  {"status": status})
+                  "updates/update.html",
+                  {"update": update})
 
 
 def show_user(request, user_id):
     user = User.objects.get(pk=user_id)
-    statuses = user.status_set.all().order_by('-posted_at')
+    updates = user.update_set.all().order_by('-posted_at')
     return render(request,
                   "updates/user.html",
                   {"user": user,
-                   "statuses": statuses})
+                   "updates": updates})
