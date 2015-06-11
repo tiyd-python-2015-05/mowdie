@@ -20,8 +20,8 @@ from users import views as users_views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url('^', include('django.contrib.auth.urls')),
     url(r'^$', updates_views.index, name="index"),
     url(r'^user/(?P<user_id>\d+)$', updates_views.show_user, name="show_user"),
-    url(r'^login/$', users_views.user_login, name="user_login"),
     url(r'^register/$', users_views.user_register, name="user_register"),
 ]
