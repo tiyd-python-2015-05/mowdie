@@ -11,6 +11,13 @@ def index(request):
                   {"statuses": statuses})
 
 
+def show_status(request, status_id):
+    status = Status.objects.get(pk=status_id)
+    return render(request,
+                  "updates/status.html",
+                  {"status": status})
+
+
 def show_user(request, user_id):
     user = User.objects.get(pk=user_id)
     statuses = user.status_set.all().order_by('-posted_at')
