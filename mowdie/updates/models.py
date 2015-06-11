@@ -1,9 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from datetime import datetime
-
-# Create your models here.
 
 class Status(models.Model):
     class Meta:
@@ -31,10 +28,20 @@ class Favorite(models.Model):
 def load_fake_data():
     """Create fake users and statuses for Mowdie."""
     from faker import Faker
-    from itertools import product
     import random
+    from django.conf import settings
+    from PyMarkovTextGenerator import Markov
 
     fake = Faker()
+    textgen = Markov(prob=True, level=3)
+    with open(settings.BASE_DIR + "/../john_carter.txt") as file:
+        textgen.parse(file.read())
+
+    def tweet():
+        return textgen.generate(
+            startf=lambda db: random.choice([x for x in db
+                                             if x[0][0].isupper()]),
+            endf=lambda s: len(s) > 120)
 
     Favorite.objects.all().delete()
     Status.objects.all().delete()
@@ -50,13 +57,15 @@ def load_fake_data():
 
     statuses = []
     for _ in range(100):
-        status = Status(text=fake.text(max_nb_chars=140),
+        status = Status(text=tweet(),
                         posted_at=fake.date_time_this_year(),
                         user=random.choice(users))
         status.save()
         statuses.append(status)
 
-    combos = random.sample(list(product(users, statuses)), 200)
+    combos = random.sample([(user, status)
+                            for user in users
+                            for status in statuses], 200)
     for user, status in combos:
         favorite = Favorite(user=user, status=status)
         favorite.save()
