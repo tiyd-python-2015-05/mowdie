@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.contrib import messages
 
 # Create your views here.
 from users.forms import UserForm
-
 
 def user_login(request):
     if request.method == "POST":
@@ -13,6 +13,11 @@ def user_login(request):
         user = authenticate(username=username, password=password)
         if user is not None and user.is_active:
             login(request, user)
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                "You are now logged in, {}!".format(user.username)
+            )
             return redirect('index')
         else:
             # disabled account
@@ -21,8 +26,11 @@ def user_login(request):
     else:
         return render(request, "users/login.html")
 
+
 def user_register(request):
-    if request.method == "POST":
+    if request.method == "GET":
+        form = UserForm()
+    elif request.method == "POST":
         form = UserForm(request.POST)
         if form.is_valid():
             user = form.save()
@@ -36,7 +44,10 @@ def user_register(request):
             user = authenticate(username=user.username,
                                 password=password)
             login(request, user)
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                "Congratulations, {}, on creating your new account! You are now logged in.".format(
+                    user.username))
             return redirect('index')
-    else:
-        form = UserForm()
     return render(request, "users/register.html", {'form': form})
