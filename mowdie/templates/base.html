@@ -2,11 +2,18 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>Mowdie</title>
 </head>
 <body>
 <header>
     <h1><a href="{% url 'index' %}">Mowdie</a></h1>
+    {% if user.is_authenticated %}
+        Hi, {{ user }} |
+        <a href="{% url "add_update" %}">Post a new update</a>
+    {% else %}
+        <a href="{% url "login" %}">Login</a> |
+        <a href="{% url "user_register" %}">Register</a>
+    {% endif %}
 </header>
 <div>
     {% if messages %}
