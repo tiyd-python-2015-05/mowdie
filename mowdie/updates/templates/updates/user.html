@@ -6,15 +6,7 @@
     <h3>Updates</h3>
     {% for update in updates %}
         <div>
-            <p>{{ update.text }}</p>
-
-            <p>
-                <em>{{ update.posted_at }}</em>
-                -
-                {{ update.favorite_set.count }} favorites
-            </p>
-
-
+            {% include "updates/_update.html" %}
         </div>
     {% endfor %}
 {% endblock %}

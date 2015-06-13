@@ -2,14 +2,19 @@
 
 {% block content %}
     <div>
-        <p>{{ status.text }}</p>
+        {% include "updates/_update.html" %}
 
-        <p>
-            <a href="{% url 'show_user' status.user.id %}">{{ status.user }}</a>
-            -
-            <em>{{ status.posted_at }}</em>
-            -
-            {{ status.favorite__count }} favorites
-        </p>
+        {% if update.favorite_set.count > 0 %}
+            <h3>People who have favorited this update</h3>
+            <ul>
+                {% for favorite in update.favorite_set.all %}
+                    <li>
+                        <a href="{% url 'show_user' favorite.user.id %}">
+                            {{ favorite.user }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
 {% endblock %}

@@ -1,0 +1,11 @@
+<p>{{ update.text }}</p>
+
+<p>
+    <a href="{% url 'show_user' update.user.id %}">{{ update.user }}</a>
+    -
+    <em>
+        <a href="{% url 'show_update' update.id %}">{{ update.posted_at }}</a>
+    </em>
+    -
+    {{ update.favorite_set.count }} favorites
+</p>
