@@ -6,4 +6,5 @@ urlpatterns = [
     url(r'^new/', views.add_update, name="add_update"),
     url(r'^(?P<update_id>\d+)$', views.show_update, name="show_update"),
     url(r'^(?P<update_id>\d+)/favorite$', views.add_favorite, name="add_favorite"),
+    url(r'^(?P<update_id>\d+)/favorite/delete$', views.delete_favorite, name="delete_favorite"),
 ]

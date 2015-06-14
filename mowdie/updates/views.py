@@ -52,6 +52,19 @@ def show_user(request, user_id):
 @login_required
 def add_favorite(request, update_id):
     update = get_object_or_404(Update, pk=update_id)
-    if not update.favorite_set.filter(user=request.user).count():
+    if request.user not in update.favorited_users.all():
         update.favorite_set.create(user=request.user)
+        messages.add_message(request, messages.SUCCESS,
+                             "You have favorited this update.")
+    return redirect("show_update", update.id)
+
+
+@login_required
+def delete_favorite(request, update_id):
+    update = get_object_or_404(Update, pk=update_id)
+    favorite = update.favorite_set.filter(user=request.user)[0]
+    if favorite:
+        favorite.delete()
+        messages.add_message(request, messages.SUCCESS,
+                             "You have unfavorited this update.")
     return redirect("show_update", update.id)

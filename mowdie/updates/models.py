@@ -6,6 +6,8 @@ class Update(models.Model):
     user = models.ForeignKey(User)
     text = models.CharField(max_length=140)
     posted_at = models.DateTimeField()
+    favorited_users = models.ManyToManyField(User, through="Favorite",
+                                             related_name="favorited_updates")
 
     def __str__(self):
         return "{}: {}".format(self.user, self.text)
