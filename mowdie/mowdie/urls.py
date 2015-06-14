@@ -22,8 +22,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^$', updates_views.index, name="index"),
-    url(r'^updates/new/', updates_views.add_update, name="add_update"),
+    url(r'^updates/', include('updates.urls')),
     url(r'^user/(?P<user_id>\d+)$', updates_views.show_user, name="show_user"),
-    url(r'^updates/(?P<update_id>\d+)$', updates_views.show_update, name="show_update"),
     url(r'^register/$', users_views.user_register, name="user_register"),
 ]

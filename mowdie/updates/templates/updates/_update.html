@@ -8,4 +8,6 @@
     </em>
     -
     {{ update.favorite_set.count }} favorites
+    -
+    <a href="{% url 'add_favorite' update.id %}">Favorite this update</a>
 </p>
