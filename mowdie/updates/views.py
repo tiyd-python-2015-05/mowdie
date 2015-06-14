@@ -47,3 +47,11 @@ def show_user(request, user_id):
                   "updates/user.html",
                   {"user": user,
                    "updates": updates})
+
+
+@login_required
+def add_favorite(request, update_id):
+    update = get_object_or_404(Update, pk=update_id)
+    if not update.favorite_set.filter(user=request.user).count():
+        update.favorite_set.create(user=request.user)
+    return redirect("show_update", update.id)
