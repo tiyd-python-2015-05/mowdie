@@ -1,17 +1,19 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import datetime
 from .models import Update
 from django.contrib.auth.models import User
 
 from .forms import UpdateForm
 
+
 def index(request):
     updates = Update.objects.order_by('-posted_at')
     return render(request,
                   "updates/index.html",
                   {"updates": updates})
+
 
 @login_required
 def add_update(request):
@@ -32,7 +34,7 @@ def add_update(request):
 
 
 def show_update(request, update_id):
-    update = Update.objects.get(pk=update_id)
+    update = get_object_or_404(Update, pk=update_id)
     return render(request,
                   "updates/update.html",
                   {"update": update})
