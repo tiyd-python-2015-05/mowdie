@@ -10,10 +10,21 @@ from .forms import UpdateForm
 
 
 def index(request):
-    updates = Update.objects.order_by('-posted_at')
+    user = request.user
+    if user.is_authenticated() and user.profile.followed.count() > 0 and False:
+        header = "Updates from users you follow"
+        updates = Update.objects.filter(user__profile__followers__user=request.user)
+    else:
+        header = "All updates"
+        updates = Update.objects
+
+    updates = updates.order_by('-posted_at').prefetch_related()
+
+
     return render(request,
-                  "updates/index.html",
-                  {"updates": updates})
+                  "updates/updates.html",
+                  {"updates": updates,
+                   "header": header})
 
 
 @login_required
