@@ -1,4 +1,8 @@
 Django==1.8.2
+psycopg2
 fake-factory==0.5.1
 ipython==3.1.0
 PyMarkovTextGenerator
+django-debug-toolbar
+django-extensions
+werkzeug
