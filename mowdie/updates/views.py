@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import datetime
 from .models import Update, Favorite
@@ -72,3 +73,21 @@ def delete_favorite(request, update_id):
                              "This was not a favorite update.")
 
     return redirect("show_update", update.id)
+
+
+@login_required
+def followed_updates(request):
+    # updates = Update.objects.filter(user__profile__in=request.user.profile.followed.all())
+    updates = Update.objects.filter(
+        user__profile__followers__user=request.user).order_by('-posted_at')
+    return render(request, "updates/updates.html",
+                  {"header": "Updates from users you follow",
+                   "updates": updates})
+
+
+def most_favorited_updates(request):
+    updates = Update.objects.annotate(
+        favorite_count=Count('favorite')).order_by('-favorite_count')[:20]
+    return render(request, "updates/updates.html",
+                  {"header": "Most favorited updates",
+                   "updates": updates})

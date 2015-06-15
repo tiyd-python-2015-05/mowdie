@@ -3,6 +3,27 @@
 {% block content %}
     <h2>User {{ user }}</h2>
 
+    {% if request.user.is_authenticated %}
+        <form method="POST" action="{% url 'follow_user' user.id %}">
+            {% csrf_token %}
+            <input type="submit" value="Follow user" />
+        </form>
+    {% endif %}
+
+    <h3>Followed</h3>
+    <ul>
+    {% for profile in user.profile.followed.all %}
+        <li>{{ profile }}</li>
+    {% endfor %}
+    </ul>
+
+    <h3>Followers</h3>
+    <ul>
+    {% for profile in user.profile.followers.all %}
+        <li>{{ profile }}</li>
+    {% endfor %}
+    </ul>
+
     <h3>Updates</h3>
     {% for update in user.updates.all %}
         <div>

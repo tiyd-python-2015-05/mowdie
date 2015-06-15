@@ -18,6 +18,7 @@ class Profile(models.Model):
                           null=True, blank=True)
     birthday = models.DateField(null=True, blank=True,
                                 validators=[validate_date_in_past])
+    followed = models.ManyToManyField("Profile", related_name="followers")
 
     def __str__(self):
         return str(self.user)

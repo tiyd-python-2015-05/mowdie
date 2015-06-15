@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 
@@ -8,13 +8,18 @@ from django.contrib import messages
 from users.forms import UserForm, ProfileForm
 from users.models import Profile
 
+def get_or_create_profile(user):
+    try:
+        profile = user.profile
+    except Profile.DoesNotExist:
+        profile = Profile(user=user)
+        profile.save()
+
+    return profile
 
 @login_required
 def edit_profile(request):
-    try:
-        profile = request.user.profile
-    except Profile.DoesNotExist:
-        profile = Profile(user=request.user)
+    profile = get_or_create_profile(request.user)
 
     if request.method == "GET":
         profile_form = ProfileForm(instance=profile)
@@ -26,6 +31,18 @@ def edit_profile(request):
                                  "Your profile has been updated.")
 
     return render(request, "users/edit_profile.html", {"form": profile_form})
+
+@login_required
+def follow_user(request, user_id):
+    follower = get_or_create_profile(request.user)
+    user_to_follow = get_object_or_404(User, pk=user_id)
+    profile_to_follow = get_or_create_profile(user_to_follow)
+
+    follower.followed.add(profile_to_follow)
+    messages.add_message(request, messages.SUCCESS,
+                         "You have followed this user.")
+    return redirect('show_user', user_to_follow.id)
+
 
 
 def user_register(request):
