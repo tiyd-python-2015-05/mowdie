@@ -8,6 +8,7 @@ from django.contrib import messages
 from users.forms import UserForm, ProfileForm
 from users.models import Profile
 
+
 def get_or_create_profile(user):
     try:
         profile = user.profile
@@ -16,6 +17,16 @@ def get_or_create_profile(user):
         profile.save()
 
     return profile
+
+
+def show_user(request, user_id):
+    user = User.objects.get(pk=user_id)
+    updates = user.update_set.all().order_by('-posted_at')
+    return render(request,
+                  "updates/user.html",
+                  {"user": user,
+                   "updates": updates})
+
 
 @login_required
 def edit_profile(request):
@@ -32,6 +43,7 @@ def edit_profile(request):
 
     return render(request, "users/edit_profile.html", {"form": profile_form})
 
+
 @login_required
 def follow_user(request, user_id):
     follower = get_or_create_profile(request.user)
@@ -42,7 +54,6 @@ def follow_user(request, user_id):
     messages.add_message(request, messages.SUCCESS,
                          "You have followed this user.")
     return redirect('show_user', user_to_follow.id)
-
 
 
 def user_register(request):

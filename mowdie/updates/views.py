@@ -41,15 +41,6 @@ def show_update(request, update_id):
                   {"update": update})
 
 
-def show_user(request, user_id):
-    user = User.objects.get(pk=user_id)
-    updates = user.update_set.all().order_by('-posted_at')
-    return render(request,
-                  "updates/user.html",
-                  {"user": user,
-                   "updates": updates})
-
-
 @login_required
 def add_favorite(request, update_id):
     update = get_object_or_404(Update, pk=update_id)

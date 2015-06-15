@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
+from django.utils.timezone import make_aware
 from updates.models import Update, Favorite
+from users.models import Profile
 
 
 class Command(BaseCommand):
@@ -32,6 +34,7 @@ class Command(BaseCommand):
                         email=fake.email())
             user.set_password("password")
             user.save()
+            Profile(user=user).save()
             users.append(user)
 
         user = User(username="admin",
@@ -40,11 +43,12 @@ class Command(BaseCommand):
                     is_superuser=True)
         user.set_password("password")
         user.save()
+        Profile(user=user).save()
 
         updates = []
         for _ in range(100):
             update = Update(text=update_text(),
-                            posted_at=fake.date_time_this_year(),
+                            posted_at=make_aware(fake.date_time_this_year()),
                             user=random.choice(users))
             update.save()
             updates.append(update)
