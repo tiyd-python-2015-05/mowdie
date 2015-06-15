@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^updates/', include('updates.urls')),
     url(r'^user/(?P<user_id>\d+)$', updates_views.show_user, name="show_user"),
     url(r'^register/$', users_views.user_register, name="user_register"),
+    url(r'^account/edit/', users_views.edit_profile, name="edit_profile")
 ]

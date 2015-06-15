@@ -1,9 +1,31 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 
 # Create your views here.
 from users.forms import UserForm, ProfileForm
+from users.models import Profile
+
+
+@login_required
+def edit_profile(request):
+    try:
+        profile = request.user.profile
+    except Profile.DoesNotExist:
+        profile = Profile(user=request.user)
+
+    if request.method == "GET":
+        profile_form = ProfileForm(instance=profile)
+    elif request.method == "POST":
+        profile_form = ProfileForm(instance=profile, data=request.POST)
+        if profile_form.is_valid():
+            profile_form.save()
+            messages.add_message(request, messages.SUCCESS,
+                                 "Your profile has been updated.")
+
+    return render(request, "users/edit_profile.html", {"form": profile_form})
 
 
 def user_register(request):

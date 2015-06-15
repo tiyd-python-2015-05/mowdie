@@ -7,10 +7,10 @@
         {% if update.favorite_set.count > 0 %}
             <h3>People who have favorited this update</h3>
             <ul>
-                {% for favorite in update.favorite_set.all %}
+                {% for user in update.favorited_users.all %}
                     <li>
-                        <a href="{% url 'show_user' favorite.user.id %}">
-                            {{ favorite.user }}
+                        <a href="{% url 'show_user' user.id %}">
+                            {{ user }}
                         </a>
                     </li>
                 {% endfor %}

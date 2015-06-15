@@ -4,7 +4,14 @@
     <h2>User {{ user }}</h2>
 
     <h3>Updates</h3>
-    {% for update in updates %}
+    {% for update in user.updates.all %}
+        <div>
+            {% include "updates/_update.html" %}
+        </div>
+    {% endfor %}
+
+    <h3>Favorite updates</h3>
+    {% for update in user.favorited_updates.all %}
         <div>
             {% include "updates/_update.html" %}
         </div>

@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import datetime
-from .models import Update
+from .models import Update, Favorite
 from django.contrib.auth.models import User
 
 from .forms import UpdateForm
@@ -62,9 +62,13 @@ def add_favorite(request, update_id):
 @login_required
 def delete_favorite(request, update_id):
     update = get_object_or_404(Update, pk=update_id)
-    favorite = update.favorite_set.filter(user=request.user)[0]
-    if favorite:
+    try:
+        favorite = update.favorite_set.get(user=request.user)
         favorite.delete()
         messages.add_message(request, messages.SUCCESS,
                              "You have unfavorited this update.")
+    except Favorite.DoesNotExist:
+        messages.add_message(request, messages.ERROR,
+                             "This was not a favorite update.")
+
     return redirect("show_update", update.id)
