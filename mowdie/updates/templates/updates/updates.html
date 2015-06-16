@@ -3,7 +3,7 @@
 {% block content %}
     <h2>{{ header }}</h2>
     {% for update in updates %}
-        <div>
+        <div class="update {% cycle 'odd' 'even' %}-row">
             {% include "updates/_update.html" %}
         </div>
     {% endfor %}

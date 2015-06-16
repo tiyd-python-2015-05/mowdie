@@ -1,20 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div>
-        {% include "updates/_update.html" %}
+    <div class="row">
+        <div class="col-md-8">
+            {% include "updates/_update.html" %}
+        </div>
 
-        {% if update.favorite_set.count > 0 %}
-            <h3>People who have favorited this update</h3>
-            <ul>
-                {% for user in update.favorited_users.all %}
-                    <li>
-                        <a href="{% url 'show_user' user.id %}">
-                            {{ user }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        <div class="col-md-4">
+            {% if update.favorite_set.count > 0 %}
+                <p><strong>People who have favorited this update</strong></p>
+                <ul>
+                    {% for user in update.favorited_users.all %}
+                        <li>
+                            <a href="{% url 'show_user' user.id %}">
+                                {{ user }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}
