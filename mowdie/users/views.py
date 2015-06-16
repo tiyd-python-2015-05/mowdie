@@ -36,9 +36,9 @@ def edit_profile(request):
 
 @login_required
 def follow_user(request, user_id):
-    follower = get_profile(request.user)
+    follower = get_profile(request.user, save=True)
     user_to_follow = get_object_or_404(User, pk=user_id)
-    profile_to_follow = get_or_create_profile(user_to_follow)
+    profile_to_follow = get_profile(user_to_follow, save=True)
 
     follower.followed.add(profile_to_follow)
     messages.add_message(request, messages.SUCCESS,
