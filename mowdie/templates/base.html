@@ -33,7 +33,9 @@
 
         <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
-                <p class="navbar-text">Hi, {{ user }}</p>
+                <li>
+                    <a href="{% url 'edit_profile' %}">Hi, {{ user }}</a>
+                </li>
             {% else %}
                 <li>
                     <a href="{% url "login" %}">Login</a>
@@ -49,9 +51,6 @@
     {% bootstrap_messages %}
     {% block content %}
     {% endblock %}
-    <footer>
-        <strong>Created in TIY Durham Python May 2015 class</strong>
-    </footer>
 </div>
 </body>
 </html>
