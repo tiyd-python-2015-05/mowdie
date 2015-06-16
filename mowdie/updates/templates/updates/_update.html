@@ -1,7 +1,8 @@
 <p>{{ update.text }}</p>
 
 <p>
-    <a href="{% url 'show_user' update.user.id %}">{{ update.user }}</a>
+    <a href="{% url 'show_user' update.user.id %}"
+       class="user-link">{{ update.user }}</a>
     -
     <em>
         <a href="{% url 'show_update' update.id %}">{{ update.posted_at }}</a>
