@@ -1,43 +1,71 @@
 {% load staticfiles %}
+{% load bootstrap3 %}
 <!DOCTYPE html>
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <link rel="shortcut icon" href="{% static "favicon.ico" %}" />
+    <link rel="shortcut icon" href="{% static "favicon.ico" %}"/>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mowdie</title>
 </head>
 <body>
-<header>
-    <h1><a href="{% url 'index' %}">Mowdie</a></h1>
-    {% if user.is_authenticated %}
-        Hi, {{ user }} |
-        <a href="{% url "add_update" %}">Post a new update</a> |
-        <a href="{% url "followed_updates" %}">Updates from people you follow</a>
-
-    {% else %}
-        <a href="{% url "login" %}">Login</a> |
-        <a href="{% url "user_register" %}">Register</a>
-    {% endif %}
-    | <a href="{% url "most_favorited_updates" %}">Most favorited updates</a>
-</header>
-<div>
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-                        Important:
-                    {% endif %}
-                    {{ message }}
+<nav class="navbar navbar-default navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{% url 'index' %}">Mowdie</a>
+        </div>
+        <ul class="nav navbar-nav navbar-left">
+            {#            <li class="active"><a href="#">Active</a></li>#}
+            {% if user.is_authenticated %}
+                <li>
+                    <a href="{% url "add_update" %}">Post update</a>
                 </li>
-            {% endfor %}
+                <li>
+                    <a href="{% url "followed_updates" %}">People you
+                        follow</a>
+                </li>
+            {% endif %}
+            <li><a href="{% url "most_favorited_updates" %}">Most favorited
+                updates</a></li>
         </ul>
-    {% endif %}
+
+        <ul class="nav navbar-nav navbar-right">
+            {% if user.is_authenticated %}
+                <p class="navbar-text">Hi, {{ user }}</p>
+            {% else %}
+                <li>
+                    <a href="{% url "login" %}">Login</a>
+                </li>
+                <li>
+                    <a href="{% url "user_register" %}">Register</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <div>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %}
+                        class="{{ message.tags }}"{% endif %}>
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                            Important:
+                        {% endif %}
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+    {% block content %}
+    {% endblock %}
+    <footer>
+        <strong>Created in TIY Durham Python May 2015 class</strong>
+    </footer>
 </div>
-{% block content %}
-{% endblock %}
-<footer>
-    <strong>Created in TIY Durham Python May 2015 class</strong>
-</footer>
 </body>
 </html>
