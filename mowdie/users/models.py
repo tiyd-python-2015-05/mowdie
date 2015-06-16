@@ -16,7 +16,8 @@ def get_profile(user, save=False):
         try:
             profile = user.profile
         except Profile.DoesNotExist:
-            profile = Profile(user=user)
+            profile = Profile()
+            profile.user = user
             if save: profile.save()
         finally:
             return profile
