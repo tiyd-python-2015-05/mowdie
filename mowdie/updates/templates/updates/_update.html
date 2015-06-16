@@ -7,10 +7,10 @@
         <a href="{% url 'show_update' update.id %}">{{ update.posted_at }}</a>
     </em>
     -
-    {{ update.favorite_set.count }} favorites
+    {{ update.favorite__count }} favorites
     {% if user.is_authenticated %}
         -
-        {% if user in update.favorited_users.all %}
+        {% if update in favorites %}
             You have favorited this.
             <a href="{% url 'delete_favorite' update.id %}">X</a>
         {% else %}

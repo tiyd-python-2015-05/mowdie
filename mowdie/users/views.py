@@ -6,17 +6,7 @@ from django.contrib import messages
 
 # Create your views here.
 from users.forms import UserForm, ProfileForm
-from users.models import Profile
-
-
-def get_or_create_profile(user):
-    try:
-        profile = user.profile
-    except Profile.DoesNotExist:
-        profile = Profile(user=user)
-        profile.save()
-
-    return profile
+from users.models import get_profile
 
 
 def show_user(request, user_id):
@@ -30,7 +20,7 @@ def show_user(request, user_id):
 
 @login_required
 def edit_profile(request):
-    profile = get_or_create_profile(request.user)
+    profile = get_profile(request.user)
 
     if request.method == "GET":
         profile_form = ProfileForm(instance=profile)
@@ -46,7 +36,7 @@ def edit_profile(request):
 
 @login_required
 def follow_user(request, user_id):
-    follower = get_or_create_profile(request.user)
+    follower = get_profile(request.user)
     user_to_follow = get_object_or_404(User, pk=user_id)
     profile_to_follow = get_or_create_profile(user_to_follow)
 

@@ -4,27 +4,50 @@ from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import datetime
 from .models import Update, Favorite
-from django.contrib.auth.models import User
 
 from .forms import UpdateForm
 
 
-def index(request):
-    user = request.user
-    if user.is_authenticated() and user.profile.followed.count() > 0 and False:
-        header = "Updates from users you follow"
-        updates = Update.objects.filter(user__profile__followers__user=request.user)
+def updates_context(request, updates, header, **kwargs):
+    updates = updates.annotate(Count('favorite')).select_related()
+
+    if request.user.is_authenticated():
+        favorites = request.user.favorited_updates.all()
     else:
-        header = "All updates"
-        updates = Update.objects
+        favorites = []
 
-    updates = updates.order_by('-posted_at').prefetch_related()
+    context = kwargs.copy()
+    context.update({"header": header,
+                    "updates": updates,
+                    "favorites": favorites})
+    return context
 
 
+def index(request):
     return render(request,
                   "updates/updates.html",
-                  {"updates": updates,
-                   "header": header})
+                  updates_context(request=request,
+                                  updates=Update.objects.order_by('-posted_at'),
+                                  header="All updates"))
+
+
+@login_required
+def followed_updates(request):
+    updates = Update.objects.filter(
+        user__profile__followers__user=request.user).order_by('-posted_at')
+    return render(request, "updates/updates.html",
+                  updates_context(request=request,
+                                  updates=updates,
+                                  header="Updates from users you follow"))
+
+
+def most_favorited_updates(request):
+    updates = Update.objects.annotate(Count('favorite')).order_by(
+        '-favorite__count')[:20]
+    return render(request, "updates/updates.html",
+                  updates_context(request=request,
+                                  updates=updates,
+                                  header="Most favorited updates"))
 
 
 @login_required
@@ -47,9 +70,15 @@ def add_update(request):
 
 def show_update(request, update_id):
     update = get_object_or_404(Update, pk=update_id)
+    update.favorite__count = update.favorite_set.count()
+    if request.user.is_authenticated():
+        favorites = request.user.favorited_updates.all()
+    else:
+        favorites = []
     return render(request,
                   "updates/update.html",
-                  {"update": update})
+                  {"update": update,
+                   "favorites": favorites})
 
 
 @login_required
@@ -75,21 +104,3 @@ def delete_favorite(request, update_id):
                              "This was not a favorite update.")
 
     return redirect("show_update", update.id)
-
-
-@login_required
-def followed_updates(request):
-    # updates = Update.objects.filter(user__profile__in=request.user.profile.followed.all())
-    updates = Update.objects.filter(
-        user__profile__followers__user=request.user).order_by('-posted_at')
-    return render(request, "updates/updates.html",
-                  {"header": "Updates from users you follow",
-                   "updates": updates})
-
-
-def most_favorited_updates(request):
-    updates = Update.objects.annotate(
-        favorite_count=Count('favorite')).order_by('-favorite_count')[:20]
-    return render(request, "updates/updates.html",
-                  {"header": "Most favorited updates",
-                   "updates": updates})
