@@ -5,8 +5,16 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 
 # Create your views here.
+from django.views.generic import ListView
 from users.forms import UserForm, ProfileForm
 from users.models import get_profile
+
+
+class UserListView(ListView):
+    model = User
+    paginate_by = 10
+    context_object_name = 'users'
+    template_name = 'users/user_list.html'
 
 
 def show_user(request, user_id):

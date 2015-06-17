@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import datetime
-from django.views.generic import View, RedirectView
+from django.views.generic import View, RedirectView, ListView
 
 from .models import Update, Favorite
 from .forms import UpdateForm
@@ -35,13 +35,23 @@ def updates_context(request, updates, header, **kwargs):
     return context
 
 
-def index(request):
-    updates = Update.objects.order_by('-posted_at')
-    return render(request,
-                  "updates/updates.html",
-                  updates_context(request=request,
-                                  updates=updates,
-                                  header="All updates"))
+
+class UpdateListView(ListView):
+    model = Update
+    context_object_name = 'updates'
+    queryset = Update.objects.order_by('-posted_at').annotate(
+        Count('favorite')).select_related()
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["header"] = "All updates"
+        if self.request.user.is_authenticated():
+            favorites = self.request.user.favorited_updates.all()
+        else:
+            favorites = []
+        context["favorites"] = favorites
+        return context
 
 
 @login_required

@@ -17,6 +17,7 @@ from django.conf.urls import url
 from users import views as users_views
 
 urlpatterns = [
+    url(r'^$', users_views.UserListView.as_view(), name="user_list"),
     url(r'^(?P<user_id>\d+)$', users_views.show_user, name="show_user"),
     url(r'^register/$', users_views.user_register, name="user_register"),
     url(r'^edit/', users_views.edit_profile, name="edit_profile"),

@@ -27,6 +27,6 @@ urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/updates/')),
     url(r'^(?P<update_id>\d+)$', update_views.UpdateRedirectView.as_view()),
     url(r'^updates/', include('updates.urls')),
-    url(r'^user/', include('users.urls')),
+    url(r'^users/', include('users.urls')),
     url(r'^about/', AboutView.as_view(), name="about")
 ]
