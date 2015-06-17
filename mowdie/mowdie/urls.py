@@ -15,14 +15,17 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.views.generic import RedirectView
+
+from updates import views as update_views
 
 from home.views import AboutView
-from updates import views as updates_views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('django.contrib.auth.urls')),
-    url(r'^$', updates_views.index, name="index"),
+    url(r'^$', RedirectView.as_view(url='/updates/')),
+    url(r'^(?P<update_id>\d+)$', update_views.UpdateRedirectView.as_view()),
     url(r'^updates/', include('updates.urls')),
     url(r'^user/', include('users.urls')),
     url(r'^about/', AboutView.as_view(), name="about")
