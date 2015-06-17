@@ -1,0 +1,18 @@
+/*
+selector {
+    attribute: value;
+    attribute: value;
+}
+*/
+
+.update {
+    padding: 5px 10px;
+}
+
+.odd-row {
+    background-color: #EEEEEE;
+}
+
+.even-row {
+    background-color: #FCFCFC;
+}

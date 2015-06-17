@@ -38,6 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'debug_toolbar',
+    'django_extensions',
     'bootstrap3',
     'updates',
     'users',
@@ -133,8 +135,3 @@ BOOTSTRAP3 = {
     # Include jQuery with Bootstrap JavaScript (affects django-bootstrap3 template tags)
     'include_jquery': True,
 }
-
-try:
-    from .local_settings import *
-except:
-    print("local_settings.py not found")

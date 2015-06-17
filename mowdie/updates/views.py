@@ -1,16 +1,21 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import datetime
-from .models import Update, Favorite
+from django.views.generic import View
 
+from .models import Update, Favorite
 from .forms import UpdateForm
 
 
 def updates_context(request, updates, header, **kwargs):
-    updates = updates.annotate(Count('favorite')).select_related()
+    page = request.GET.get('page', 1)
+    per_page = request.GET.get('per_page', 20)
 
+    updates = updates.annotate(Count('favorite')).select_related()
+    updates_paginator = Paginator(updates, per_page)
     if request.user.is_authenticated():
         favorites = request.user.favorited_updates.all()
     else:
@@ -18,16 +23,17 @@ def updates_context(request, updates, header, **kwargs):
 
     context = kwargs.copy()
     context.update({"header": header,
-                    "updates": updates,
+                    "updates": updates_paginator.page(page),
                     "favorites": favorites})
     return context
 
 
 def index(request):
+    updates = Update.objects.order_by('-posted_at')
     return render(request,
                   "updates/updates.html",
                   updates_context(request=request,
-                                  updates=Update.objects.order_by('-posted_at'),
+                                  updates=updates,
                                   header="All updates"))
 
 

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load bootstrap3 %}
 
 {% block content %}
     <h2>{{ header }}</h2>
@@ -7,4 +8,24 @@
             {% include "updates/_update.html" %}
         </div>
     {% endfor %}
+
+    {% bootstrap_pagination updates %}
+
+    <!--
+    <div class="pagination">
+    <span class="step-links">
+        {% if updates.has_previous %}
+            <a href="{% url 'index' %}?page={{ updates.next_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ updates.number }} of {{ updates.paginator.num_pages }}.
+        </span>
+
+        {% if updates.has_next %}
+            <a href="{% url 'index' %}?page={{ updates.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+    </div>
+    -->
 {% endblock %}
