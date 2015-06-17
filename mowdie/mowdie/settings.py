@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'bootstrap3',
     'updates',
     'users',
+    'home',
 )
 
 MIDDLEWARE_CLASSES = (
