@@ -1,13 +1,20 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
 from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import datetime
 from django.views.generic import View, RedirectView, ListView
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 from .models import Update, Favorite
 from .forms import UpdateForm
+
+
+class LoginRequiredMixin(object):
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(LoginRequiredMixin, self).dispatch(request, *args,
+                                                        **kwargs)
 
 
 class UpdateRedirectView(RedirectView):
@@ -17,35 +24,18 @@ class UpdateRedirectView(RedirectView):
         return "/updates/{}".format(update_id)
 
 
-def updates_context(request, updates, header, **kwargs):
-    page = request.GET.get('page', 1)
-    per_page = request.GET.get('per_page', 20)
-
-    updates = updates.annotate(Count('favorite')).select_related()
-    updates_paginator = Paginator(updates, per_page)
-    if request.user.is_authenticated():
-        favorites = request.user.favorited_updates.all()
-    else:
-        favorites = []
-
-    context = kwargs.copy()
-    context.update({"header": header,
-                    "updates": updates_paginator.page(page),
-                    "favorites": favorites})
-    return context
-
-
-
 class UpdateListView(ListView):
+    template_name = "updates/update_list.html"
     model = Update
     context_object_name = 'updates'
     queryset = Update.objects.order_by('-posted_at').annotate(
         Count('favorite')).select_related()
     paginate_by = 20
+    header = "All updates"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["header"] = "All updates"
+        context["header"] = self.header
         if self.request.user.is_authenticated():
             favorites = self.request.user.favorited_updates.all()
         else:
@@ -54,26 +44,22 @@ class UpdateListView(ListView):
         return context
 
 
-@login_required
-def followed_updates(request):
-    updates = Update.objects.filter(
-        user__profile__followers__user=request.user).order_by('-posted_at')
-    return render(request, "updates/updates.html",
-                  updates_context(request=request,
-                                  updates=updates,
-                                  header="Updates from users you follow"))
+class FollowedUpdatesView(LoginRequiredMixin, UpdateListView):
+    header = "Updates from users you follow"
+
+    def get_queryset(self):
+        return Update.objects.filter(
+            user__profile__followers__user=self.request.user).order_by(
+            '-posted_at')
 
 
-def most_favorited_updates(request):
-    updates = Update.objects.annotate(Count('favorite')).order_by(
+class PopularUpdatesView(UpdateListView):
+    header = "Popular updates"
+    queryset = Update.objects.annotate(Count('favorite')).order_by(
         '-favorite__count')[:20]
-    return render(request, "updates/updates.html",
-                  updates_context(request=request,
-                                  updates=updates,
-                                  header="Most favorited updates"))
 
 
-class AddUpdateView(View):
+class AddUpdateView(LoginRequiredMixin, View):
     def get(self, request):
         form = UpdateForm()
         return render(request, "updates/add.html", {"form": form})
