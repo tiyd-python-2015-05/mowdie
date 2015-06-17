@@ -1,12 +1,14 @@
 from django.conf.urls import url
-from django.contrib.auth.decorators import login_required
 
 from . import views
 
 urlpatterns = [
     url(r'^$', views.UpdateListView.as_view(), name="index"),
-    url(r'^new/', views.AddUpdateView.as_view(),
+    url(r'^new/', views.UpdateCreate.as_view(),
         name="add_update"),
+    url(r'^(?P<pk>\d+)/delete/$', views.UpdateDelete.as_view(),
+        name="delete_update"),
+
     url(r'^(?P<update_id>\d+)$', views.UpdateView.as_view(),
         name="show_update"),
     url(r'^(?P<update_id>\d+)/favorite$', views.add_favorite,

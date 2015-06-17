@@ -7,7 +7,7 @@
        class="user-link">{{ update.user }}</a>
     -
     <em>
-        <a href="{% url 'show_update' update.id %}">{{ update.posted_at|naturaltime }}</a>
+        <a href="{{ update.get_absolute_url }}">{{ update.posted_at|naturaltime }}</a>
     </em>
     -
     {% with count=update.favorite__count %}

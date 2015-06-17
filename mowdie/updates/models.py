@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -8,6 +9,9 @@ class Update(models.Model):
     posted_at = models.DateTimeField()
     favorited_users = models.ManyToManyField(User, through="Favorite",
                                              related_name="favorited_updates")
+
+    def get_absolute_url(self):
+        return reverse('show_update', kwargs={"update_id": self.id})
 
     def __str__(self):
         return "{}: {}".format(self.user, self.text)

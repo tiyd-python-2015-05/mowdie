@@ -1,8 +1,11 @@
 from django.contrib import messages
+from django.core.urlresolvers import reverse_lazy
 from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 from django.utils.datetime_safe import datetime
-from django.views.generic import View, RedirectView, ListView
+from django.views.generic import View, RedirectView, ListView, CreateView, \
+    DeleteView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
@@ -13,8 +16,7 @@ from .forms import UpdateForm
 class LoginRequiredMixin(object):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        return super(LoginRequiredMixin, self).dispatch(request, *args,
-                                                        **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class UpdateRedirectView(RedirectView):
@@ -25,9 +27,9 @@ class UpdateRedirectView(RedirectView):
 
 
 class UpdateListView(ListView):
-    template_name = "updates/update_list.html"
     model = Update
     context_object_name = 'updates'
+    template_name = "updates/update_list.html"
     queryset = Update.objects.order_by('-posted_at').annotate(
         Count('favorite')).select_related()
     paginate_by = 20
@@ -50,13 +52,35 @@ class FollowedUpdatesView(LoginRequiredMixin, UpdateListView):
     def get_queryset(self):
         return Update.objects.filter(
             user__profile__followers__user=self.request.user).order_by(
-            '-posted_at')
+            '-posted_at').annotate(
+            Count('favorite')).select_related()
 
 
 class PopularUpdatesView(UpdateListView):
     header = "Popular updates"
     queryset = Update.objects.annotate(Count('favorite')).order_by(
-        '-favorite__count')[:20]
+        '-favorite__count').annotate(
+        Count('favorite')).select_related()[:20]
+
+
+class UpdateCreate(LoginRequiredMixin, CreateView):
+    model = Update
+    fields = ['text']
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.posted_at = timezone.now()
+        messages.add_message(self.request, messages.SUCCESS,
+                             "Your update was successfully posted!")
+        return super().form_valid(form)
+
+
+class UpdateDelete(LoginRequiredMixin, DeleteView):
+    model = Update
+    success_url = reverse_lazy('index')
+
+    def get_queryset(self):
+        return Update.objects.filter(user=self.request.user)
 
 
 class AddUpdateView(LoginRequiredMixin, View):
