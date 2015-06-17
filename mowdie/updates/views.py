@@ -56,9 +56,12 @@ def most_favorited_updates(request):
                                   header="Most favorited updates"))
 
 
-@login_required
-def add_update(request):
-    if request.method == "POST":
+class AddUpdateView(View):
+    def get(self, request):
+        form = UpdateForm()
+        return render(request, "updates/add.html", {"form": form})
+
+    def post(self, request):
         form = UpdateForm(request.POST)
         if form.is_valid():
             update = form.save(commit=False)
@@ -68,23 +71,22 @@ def add_update(request):
             messages.add_message(request, messages.SUCCESS,
                                  "Your update was successfully posted!")
             return redirect("index")
-    else:
-        form = UpdateForm()
-
-    return render(request, "updates/add.html", {"form": form})
+        else:
+            return render(request, "updates/add.html", {"form": form})
 
 
-def show_update(request, update_id):
-    update = get_object_or_404(Update, pk=update_id)
-    update.favorite__count = update.favorite_set.count()
-    if request.user.is_authenticated():
-        favorites = request.user.favorited_updates.all()
-    else:
-        favorites = []
-    return render(request,
-                  "updates/update.html",
-                  {"update": update,
-                   "favorites": favorites})
+class UpdateView(View):
+    def get(self, request, update_id):
+        update = get_object_or_404(Update, pk=update_id)
+        update.favorite__count = update.favorite_set.count()
+        if request.user.is_authenticated():
+            favorites = request.user.favorited_updates.all()
+        else:
+            favorites = []
+        return render(request,
+                      "updates/update.html",
+                      {"update": update,
+                       "favorites": favorites})
 
 
 @login_required
