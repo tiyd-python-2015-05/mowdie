@@ -18,5 +18,6 @@ urlpatterns = [
     url(r'^followed/', views.FollowedUpdatesView.as_view(),
         name="followed_updates"),
     url(r'^popular/', views.PopularUpdatesView.as_view(),
-        name="popular_updates")
+        name="popular_updates"),
+    url(r'^updates.png', views.updates_chart, name="updates_chart")
 ]

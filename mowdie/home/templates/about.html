@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>About Mowdie</h2>
+    <h2>About Mowdie</h2>
 
-<p>Mowdie is an example app created in the May 2015 Python course at The Iron Yard Durham.</p>
+    <p>Mowdie is an example app created in the May 2015 Python course at The
+        Iron Yard Durham.</p>
+
+    <h3>Our growth over time</h3>
+
+    <img src="{% url 'updates_chart' %}" />
+
+
 {% endblock %}

@@ -1,6 +1,8 @@
 from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Count
+from django.forms import model_to_dict
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.utils.datetime_safe import datetime
@@ -139,3 +141,31 @@ def delete_favorite(request, update_id):
                              "This was not a favorite update.")
 
     return redirect("show_update", update.id)
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+import matplotlib
+matplotlib.style.use('ggplot')
+
+def updates_chart(request):
+    updates = Update.objects.all()
+    df = pd.DataFrame(model_to_dict(update) for update in updates)
+    df['count'] = 1
+    df.index = df['posted_at']
+    counts = df['count']
+    counts = counts.sort_index()
+    series = pd.expanding_count(counts).resample('W', how=np.max, fill_method='pad')
+    response = HttpResponse(content_type='image/png')
+
+    fig = plt.figure()
+    # ax = fig.add_subplot(111)
+    # ax.plot(series)
+    series.plot()
+    plt.title("Total updates over time")
+    plt.xlabel("")
+    canvas = FigureCanvas(fig)
+    canvas.print_png(response)
+    return response
