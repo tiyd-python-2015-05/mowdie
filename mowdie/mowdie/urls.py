@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.views.generic import TemplateView
 from updates import views as updates_views
 from users import views as users_views
 
@@ -24,4 +25,5 @@ urlpatterns = [
     url(r'^$', updates_views.index, name="index"),
     url(r'^updates/', include('updates.urls')),
     url(r'^user/', include('users.urls')),
+    url(r'^about/', TemplateView.as_view(template_name="about.html"), name="about")
 ]
